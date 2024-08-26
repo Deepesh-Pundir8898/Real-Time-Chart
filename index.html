@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <style>
+        body {
+            background-color: aquamarine;
+            font-family: Arial, sans-serif;
+        }
+        .chart-container {
+            display: block;
+            margin: 50px auto;
+            width: 700px;  
+            height: 500px; 
+        }
+        canvas {
+            width: 100% !important;  
+            height: 100% !important; 
+        }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <canvas id="realTimeChart"></canvas>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('realTimeChart').getContext('2d');
+
+        // Initial data
+        const initialData = {
+            labels: [],
+            datasets: [{
+                label: 'Value',
+                data: [],
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                fill: false,
+            }],
+        };
+
+        // Chart configuration
+        const chartConfig = {
+            type: 'line',
+            data: initialData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, 
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'Time',
+                        },
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Value',
+                        },
+                    },
+                },
+                animation: false, // Disable default animation
+            },
+        };
+
+        // Initialize the chart
+        const chart = new Chart(ctx, chartConfig);
+
+        // Function to add random data
+        function addData() {
+            const newData = Math.random() * 100; // Generate random data
+            const newLabel = chart.data.labels.length;
+
+            chart.data.labels.push(newLabel);
+            chart.data.datasets[0].data.push(newData);
+
+            // Apply Anime.js animation to the chart update
+            anime({
+                targets: chart.data.datasets[0].data,
+                easing: 'easeInOutQuad',
+                duration: 1000,
+                round: 1,
+                update: function () {
+                    chart.update();
+                }
+            });
+        }
+
+        // Add data at regular intervals (e.g., every 1 second)
+        setInterval(addData, 1000);
+    </script>
+</body>
+</html>
